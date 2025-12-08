@@ -55,9 +55,10 @@ export default async function CategoryDetailPage({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {difficultyLevels.map((level) => (
-            <div
+            <Link
               key={level.id}
-              className={`bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-all cursor-pointer border-2 hover:border-opacity-100 ${category.color.replace('bg-', 'border-')} border-opacity-50`}
+              href={`/questions/${categoryId}/${level.id}`}
+              className={`bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-all cursor-pointer border-2 hover:border-opacity-100 ${category.color.replace('bg-', 'border-')} border-opacity-50 block`}
             >
               <h3 className="text-lg font-semibold text-white mb-2">
                 {level.name}
@@ -67,7 +68,7 @@ export default async function CategoryDetailPage({
                 {level.questionCount}{" "}
                 {level.questionCount === 1 ? "question" : "questions"}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

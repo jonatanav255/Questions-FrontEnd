@@ -17,7 +17,7 @@ export default function Navbar() {
             <Link
               href="/questions"
               className={`font-medium transition-colors pb-1 border-b-2 ${
-                pathname === "/questions"
+                pathname.startsWith("/questions")
                   ? "text-white border-white"
                   : "text-gray-300 hover:text-white border-transparent"
               }`}
@@ -27,7 +27,7 @@ export default function Navbar() {
             <Link
               href="/practice"
               className={`font-medium transition-colors pb-1 border-b-2 ${
-                pathname === "/practice"
+                pathname.startsWith("/practice")
                   ? "text-white border-white"
                   : "text-gray-300 hover:text-white border-transparent"
               }`}
