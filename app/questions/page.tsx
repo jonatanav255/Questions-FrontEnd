@@ -1,8 +1,12 @@
-"use client";
-
 import { categories } from "@/app/data/categories";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Question Categories | Questions App",
+  description: "Browse programming questions by category: Java, Spring, and more. Practice and improve your coding skills.",
+};
 
 export default function QuestionsPage() {
   return (

@@ -2,6 +2,27 @@ import { categories } from "@/app/data/categories";
 import { DifficultyCategory } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categoryId: string }>;
+}): Promise<Metadata> {
+  const { categoryId } = await params;
+  const category = categories.find((cat) => cat.id === categoryId);
+
+  if (!category) {
+    return {
+      title: "Category Not Found | Questions App",
+    };
+  }
+
+  return {
+    title: `${category.name} Questions | Questions App`,
+    description: `Practice ${category.name} questions across three difficulty levels: Beginner, Intermediate, and Senior. Improve your ${category.name} programming skills.`,
+  };
+}
 
 const difficultyLevels: DifficultyCategory[] = [
   {

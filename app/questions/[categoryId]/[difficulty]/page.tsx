@@ -2,12 +2,42 @@ import { categories } from "@/app/data/categories";
 import { DifficultyLevel } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 const difficultyNames: Record<DifficultyLevel, string> = {
   beginner: "Beginner",
   intermediate: "Intermediate",
   senior: "Senior",
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categoryId: string; difficulty: string }>;
+}): Promise<Metadata> {
+  const { categoryId, difficulty } = await params;
+  const category = categories.find((cat) => cat.id === categoryId);
+
+  if (!category) {
+    return {
+      title: "Category Not Found | Questions App",
+    };
+  }
+
+  const validDifficulties: DifficultyLevel[] = ["beginner", "intermediate", "senior"];
+  if (!validDifficulties.includes(difficulty as DifficultyLevel)) {
+    return {
+      title: "Invalid Difficulty | Questions App",
+    };
+  }
+
+  const difficultyLevel = difficulty as DifficultyLevel;
+
+  return {
+    title: `${category.name} ${difficultyNames[difficultyLevel]} Questions | Questions App`,
+    description: `Practice ${difficultyLevel} level ${category.name} questions. Test your knowledge and improve your ${category.name} programming skills.`,
+  };
+}
 
 const difficultyDescriptions: Record<DifficultyLevel, string> = {
   beginner: "Basic concepts and fundamentals",
