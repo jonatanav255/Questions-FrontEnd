@@ -8,4 +8,11 @@ export const categories: Category[] = [
     icon: "/images/java-brands-solid.svg",
     questionCount: 0,
   },
+  {
+    id: "spring",
+    name: "Spring",
+    color: "bg-green-500",
+    icon: "🍃",
+    questionCount: 0,
+  },
 ];
