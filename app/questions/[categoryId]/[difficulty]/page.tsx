@@ -68,12 +68,14 @@ export default async function DifficultyPage({
   return (
     <div className="h-full overflow-auto">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <Link
-          href={`/questions/${categoryId}`}
-          className="text-gray-400 hover:text-white mb-6 inline-flex items-center gap-2 transition-colors"
-        >
-          ← Back to {category.name}
-        </Link>
+        <nav aria-label="Breadcrumb">
+          <Link
+            href={`/questions/${categoryId}`}
+            className="text-gray-400 hover:text-white mb-6 inline-flex items-center gap-2 transition-colors"
+          >
+            ← Back to {category.name}
+          </Link>
+        </nav>
 
         <h1 className="text-3xl font-bold mb-2 text-white mt-4">
           {category.name} - {difficultyNames[difficultyLevel]}
@@ -82,10 +84,12 @@ export default async function DifficultyPage({
           {difficultyDescriptions[difficultyLevel]}
         </p>
 
-        <div className="text-center text-gray-500 py-12">
-          <p className="text-lg mb-4">No questions yet for this difficulty level.</p>
-          <p className="text-sm">Add your first question to get started!</p>
-        </div>
+        <section aria-label="Questions list">
+          <div className="text-center text-gray-500 py-12" role="status">
+            <p className="text-lg mb-4">No questions yet for this difficulty level.</p>
+            <p className="text-sm">Add your first question to get started!</p>
+          </div>
+        </section>
       </div>
     </div>
   );

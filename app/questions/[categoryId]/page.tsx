@@ -60,12 +60,14 @@ export default async function CategoryDetailPage({
   return (
     <div className="h-full overflow-auto">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <Link
-          href="/questions"
-          className="text-gray-400 hover:text-white mb-6 inline-flex items-center gap-2 transition-colors"
-        >
-          ← Back to Categories
-        </Link>
+        <nav aria-label="Breadcrumb">
+          <Link
+            href="/questions"
+            className="text-gray-400 hover:text-white mb-6 inline-flex items-center gap-2 transition-colors"
+          >
+            ← Back to Categories
+          </Link>
+        </nav>
 
         <h1 className="text-3xl font-bold mb-2 text-white mt-4">
           {category.name}
@@ -74,24 +76,29 @@ export default async function CategoryDetailPage({
           Select a difficulty level to add questions
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {difficultyLevels.map((level) => (
-            <Link
-              key={level.id}
-              href={`/questions/${categoryId}/${level.id}`}
-              className={`bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-all cursor-pointer border-2 hover:border-opacity-100 ${category.color.replace('bg-', 'border-')} border-opacity-50 block`}
-            >
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {level.name}
-              </h3>
-              <p className="text-gray-400 text-sm mb-3">{level.description}</p>
-              <p className="text-gray-500 text-xs">
-                {level.questionCount}{" "}
-                {level.questionCount === 1 ? "question" : "questions"}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <section aria-labelledby="difficulty-heading">
+          <h2 id="difficulty-heading" className="sr-only">Difficulty Levels</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
+            {difficultyLevels.map((level) => (
+              <Link
+                key={level.id}
+                href={`/questions/${categoryId}/${level.id}`}
+                className={`bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-all cursor-pointer border-2 hover:border-opacity-100 ${category.color.replace('bg-', 'border-')} border-opacity-50 block`}
+                role="listitem"
+                aria-label={`${level.name} difficulty - ${level.description} - ${level.questionCount} ${level.questionCount === 1 ? "question" : "questions"}`}
+              >
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {level.name}
+                </h3>
+                <p className="text-gray-400 text-sm mb-3">{level.description}</p>
+                <p className="text-gray-500 text-xs">
+                  {level.questionCount}{" "}
+                  {level.questionCount === 1 ? "question" : "questions"}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );
