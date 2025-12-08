@@ -14,6 +14,8 @@ export interface Question {
   id: string;
   question: string;
   answer: string;
+  codeSnippet?: string;
+  tags?: string[];
   categoryId: string;
   difficulty: DifficultyLevel;
   createdAt: Date;

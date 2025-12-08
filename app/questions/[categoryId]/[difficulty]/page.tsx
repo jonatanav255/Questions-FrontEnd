@@ -3,6 +3,7 @@ import { DifficultyLevel } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import DifficultyPageClient from "./DifficultyPageClient";
 
 const difficultyNames: Record<DifficultyLevel, string> = {
   beginner: "Beginner",
@@ -77,19 +78,13 @@ export default async function DifficultyPage({
           </Link>
         </nav>
 
-        <h1 className="text-3xl font-bold mb-2 text-white mt-4">
-          {category.name} - {difficultyNames[difficultyLevel]}
-        </h1>
-        <p className="text-gray-400 mb-8">
-          {difficultyDescriptions[difficultyLevel]}
-        </p>
-
-        <section aria-label="Questions list">
-          <div className="text-center text-gray-500 py-12" role="status">
-            <p className="text-lg mb-4">No questions yet for this difficulty level.</p>
-            <p className="text-sm">Add your first question to get started!</p>
-          </div>
-        </section>
+        <DifficultyPageClient
+          categoryId={categoryId}
+          categoryName={category.name}
+          difficulty={difficultyLevel}
+          difficultyName={difficultyNames[difficultyLevel]}
+          difficultyDescription={difficultyDescriptions[difficultyLevel]}
+        />
       </div>
     </div>
   );
