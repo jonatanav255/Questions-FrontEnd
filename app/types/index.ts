@@ -1,5 +1,15 @@
 export type DifficultyLevel = "beginner" | "intermediate" | "senior";
 
+export type TailwindBgColor =
+  | "bg-orange-500"
+  | "bg-green-500"
+  | "bg-blue-500"
+  | "bg-red-500"
+  | "bg-purple-500"
+  | "bg-yellow-500"
+  | "bg-pink-500"
+  | "bg-indigo-500";
+
 export interface Question {
   id: string;
   question: string;
@@ -12,7 +22,7 @@ export interface Question {
 export interface Category {
   id: string;
   name: string;
-  color: string;
+  color: TailwindBgColor;
   icon: string;
   questionCount: number;
 }
