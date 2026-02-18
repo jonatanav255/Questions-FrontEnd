@@ -1,4 +1,4 @@
-import { categories } from "@/app/data/categories";
+import { getCategory, getQuestionCount } from "@/app/services/api";
 import { DifficultyCategory } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,40 +10,19 @@ export async function generateMetadata({
   params: Promise<{ categoryId: string }>;
 }): Promise<Metadata> {
   const { categoryId } = await params;
-  const category = categories.find((cat) => cat.id === categoryId);
 
-  if (!category) {
+  try {
+    const category = await getCategory(categoryId);
+    return {
+      title: `${category.name} Questions | Questions App`,
+      description: `Practice ${category.name} questions across three difficulty levels: Beginner, Intermediate, and Senior. Improve your ${category.name} programming skills.`,
+    };
+  } catch {
     return {
       title: "Category Not Found | Questions App",
     };
   }
-
-  return {
-    title: `${category.name} Questions | Questions App`,
-    description: `Practice ${category.name} questions across three difficulty levels: Beginner, Intermediate, and Senior. Improve your ${category.name} programming skills.`,
-  };
 }
-
-const difficultyLevels: DifficultyCategory[] = [
-  {
-    id: "beginner",
-    name: "Beginner",
-    description: "Basic concepts and fundamentals",
-    questionCount: 0,
-  },
-  {
-    id: "intermediate",
-    name: "Intermediate",
-    description: "Intermediate level questions",
-    questionCount: 0,
-  },
-  {
-    id: "senior",
-    name: "Senior",
-    description: "Advanced concepts and expert level",
-    questionCount: 0,
-  },
-];
 
 export default async function CategoryDetailPage({
   params,
@@ -51,9 +30,43 @@ export default async function CategoryDetailPage({
   params: Promise<{ categoryId: string }>;
 }) {
   const { categoryId } = await params;
-  const category = categories.find((cat) => cat.id === categoryId);
 
-  if (!category) {
+  let category;
+  let difficultyLevels: DifficultyCategory[] = [];
+  let error = null;
+
+  try {
+    category = await getCategory(categoryId);
+
+    // Fetch question counts for each difficulty level
+    const [beginnerCount, intermediateCount, seniorCount] = await Promise.all([
+      getQuestionCount(categoryId, "BEGINNER"),
+      getQuestionCount(categoryId, "INTERMEDIATE"),
+      getQuestionCount(categoryId, "SENIOR"),
+    ]);
+
+    difficultyLevels = [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Basic concepts and fundamentals",
+        questionCount: beginnerCount,
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Intermediate level questions",
+        questionCount: intermediateCount,
+      },
+      {
+        id: "senior",
+        name: "Senior",
+        description: "Advanced concepts and expert level",
+        questionCount: seniorCount,
+      },
+    ];
+  } catch (err) {
+    error = err instanceof Error ? err.message : "Failed to load category";
     notFound();
   }
 

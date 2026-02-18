@@ -1,4 +1,4 @@
-import { categories } from "@/app/data/categories";
+import { getCategory } from "@/app/services/api";
 import { DifficultyLevel } from "@/app/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,13 +17,6 @@ export async function generateMetadata({
   params: Promise<{ categoryId: string; difficulty: string }>;
 }): Promise<Metadata> {
   const { categoryId, difficulty } = await params;
-  const category = categories.find((cat) => cat.id === categoryId);
-
-  if (!category) {
-    return {
-      title: "Category Not Found | Questions App",
-    };
-  }
 
   const validDifficulties: DifficultyLevel[] = ["beginner", "intermediate", "senior"];
   if (!validDifficulties.includes(difficulty as DifficultyLevel)) {
@@ -34,10 +27,17 @@ export async function generateMetadata({
 
   const difficultyLevel = difficulty as DifficultyLevel;
 
-  return {
-    title: `${category.name} ${difficultyNames[difficultyLevel]} Questions | Questions App`,
-    description: `Practice ${difficultyLevel} level ${category.name} questions. Test your knowledge and improve your ${category.name} programming skills.`,
-  };
+  try {
+    const category = await getCategory(categoryId);
+    return {
+      title: `${category.name} ${difficultyNames[difficultyLevel]} Questions | Questions App`,
+      description: `Practice ${difficultyLevel} level ${category.name} questions. Test your knowledge and improve your ${category.name} programming skills.`,
+    };
+  } catch {
+    return {
+      title: "Category Not Found | Questions App",
+    };
+  }
 }
 
 const difficultyDescriptions: Record<DifficultyLevel, string> = {
@@ -52,11 +52,6 @@ export default async function DifficultyPage({
   params: Promise<{ categoryId: string; difficulty: string }>;
 }) {
   const { categoryId, difficulty } = await params;
-  const category = categories.find((cat) => cat.id === categoryId);
-
-  if (!category) {
-    notFound();
-  }
 
   // Validate difficulty level
   const validDifficulties: DifficultyLevel[] = ["beginner", "intermediate", "senior"];
@@ -65,6 +60,13 @@ export default async function DifficultyPage({
   }
 
   const difficultyLevel = difficulty as DifficultyLevel;
+
+  let category;
+  try {
+    category = await getCategory(categoryId);
+  } catch {
+    notFound();
+  }
 
   return (
     <div className="h-full overflow-auto">

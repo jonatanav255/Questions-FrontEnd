@@ -1,28 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { QuestionResponse } from "@/app/types/api";
 import { DifficultyLevel } from "@/app/types";
-import { createQuestion } from "@/app/services/api";
+import { updateQuestion } from "@/app/services/api";
 
-interface QuestionFormProps {
-  categoryId: string;
-  difficulty: DifficultyLevel;
+interface QuestionEditFormProps {
+  question: QuestionResponse;
   onCancel: () => void;
   onSuccess?: () => void;
 }
 
-export default function QuestionForm({
-  categoryId,
-  difficulty,
+export default function QuestionEditForm({
+  question,
   onCancel,
   onSuccess,
-}: QuestionFormProps) {
+}: QuestionEditFormProps) {
   const [formData, setFormData] = useState({
-    question: "",
-    answer: "",
-    codeSnippet: "",
-    tags: "",
+    question: question.question,
+    answer: question.answer,
+    codeSnippet: question.codeSnippet || "",
+    tags: question.tags.join(", "),
   });
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(
+    question.difficulty.toLowerCase() as DifficultyLevel
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,21 +53,13 @@ export default function QuestionForm({
     try {
       const tags = formData.tags.split(",").map((tag) => tag.trim()).filter(Boolean);
 
-      await createQuestion({
+      await updateQuestion(question.id, {
         question: formData.question,
         answer: formData.answer,
         codeSnippet: formData.codeSnippet || undefined,
-        difficulty,
-        categoryId,
+        difficulty: difficulty.toUpperCase() as "BEGINNER" | "INTERMEDIATE" | "SENIOR",
+        categoryId: question.categoryId,
         tags: tags.length > 0 ? tags : undefined,
-      });
-
-      // Reset form
-      setFormData({
-        question: "",
-        answer: "",
-        codeSnippet: "",
-        tags: "",
       });
 
       // Call success callback to refresh data
@@ -76,7 +70,7 @@ export default function QuestionForm({
       // Close modal
       onCancel();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create question");
+      setError(err instanceof Error ? err.message : "Failed to update question");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,10 +90,10 @@ export default function QuestionForm({
       >
         <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4">
           <h2 id="modal-title" className="text-2xl font-bold text-white">
-            Create New Question
+            Edit Question
           </h2>
           <p className="text-gray-400 text-sm mt-1">
-            Difficulty: <span className="capitalize font-medium">{difficulty}</span>
+            Category: <span className="font-medium">{question.categoryName}</span>
           </p>
         </div>
 
@@ -111,6 +105,29 @@ export default function QuestionForm({
               <p className="text-sm">{error}</p>
             </div>
           )}
+
+          {/* Difficulty Selection */}
+          <div>
+            <label className="block text-sm font-medium text-white mb-2">
+              Difficulty <span className="text-red-400">*</span>
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {(["beginner", "intermediate", "senior"] as DifficultyLevel[]).map((level) => (
+                <button
+                  key={level}
+                  type="button"
+                  onClick={() => setDifficulty(level)}
+                  className={`px-4 py-3 rounded-lg font-medium transition-colors capitalize ${
+                    difficulty === level
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Question Title */}
           <div>
@@ -195,7 +212,7 @@ function example() {
               disabled={isSubmitting}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Creating..." : "Create Question"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
             <button
               type="button"
