@@ -2,6 +2,8 @@
 
 import { QuestionResponse } from "@/app/types/api";
 import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface QuestionCardProps {
   question: QuestionResponse;
@@ -75,11 +77,18 @@ export default function QuestionCard({ question, onEdit, onDelete }: QuestionCar
       {/* Code Snippet */}
       {question.codeSnippet && (
         <div className="mb-4">
-          <pre className="bg-gray-900 p-4 rounded-lg overflow-x-auto">
-            <code className="text-sm text-gray-300 font-mono">
-              {question.codeSnippet}
-            </code>
-          </pre>
+          <SyntaxHighlighter
+            language="java"
+            style={vscDarkPlus}
+            customStyle={{
+              margin: 0,
+              borderRadius: "0.5rem",
+              fontSize: "0.875rem",
+            }}
+            showLineNumbers={true}
+          >
+            {question.codeSnippet}
+          </SyntaxHighlighter>
         </div>
       )}
 

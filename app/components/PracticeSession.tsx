@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { QuestionResponse } from "@/app/types/api";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface PracticeSessionProps {
   questions: QuestionResponse[];
@@ -83,11 +85,18 @@ export default function PracticeSession({ questions, onComplete }: PracticeSessi
         {/* Code Snippet */}
         {currentQuestion.codeSnippet && (
           <div className="mb-6">
-            <pre className="bg-gray-900 p-4 rounded-lg overflow-x-auto">
-              <code className="text-sm text-gray-300 font-mono">
-                {currentQuestion.codeSnippet}
-              </code>
-            </pre>
+            <SyntaxHighlighter
+              language="java"
+              style={vscDarkPlus}
+              customStyle={{
+                margin: 0,
+                borderRadius: "0.5rem",
+                fontSize: "0.875rem",
+              }}
+              showLineNumbers={true}
+            >
+              {currentQuestion.codeSnippet}
+            </SyntaxHighlighter>
           </div>
         )}
 
